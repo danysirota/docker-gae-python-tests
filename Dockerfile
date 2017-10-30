@@ -1,6 +1,10 @@
-FROM alpine:3.1
+FROM mhart/alpine-node
 
-RUN apk update && apk add alpine-sdk musl-dev linux-headers wget bash python python-dev py-pip libffi-dev openssl-dev zip && rm -rf /var/cache/apk/*
+RUN apk update
+RUN apk add alpine-sdk musl-dev linux-headers wget bash python python-dev py-pip libffi-dev openssl-dev zip
+RUN apk --update add tar
+RUN rm -rf /var/cache/apk/*
+
 RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 RUN pip install -U pip setuptools
 RUN pip install psutil pytest requests[security] pycrypto cryptography appdirs
@@ -8,12 +12,6 @@ RUN pip install psutil pytest requests[security] pycrypto cryptography appdirs
 # Install the Google Cloud SDK.
 ENV HOME /
 ENV CLOUDSDK_PYTHON_SITEPACKAGES 1
-
-ENV NODE_VERSION 8.7.0
-RUN curl -sSJL "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" -o /tmp/node-v$NODE_VERSION-linux-x64.tar.gz \
-    && tar -xzf "/tmp/node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
-    && npm install --silent -g npm \
-    && rm -f "/tmp/node-v$NODE_VERSION-linux-x64.tar.gz"
 
 # Download and install the cloud sdk
 RUN wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz --no-check-certificate \
